@@ -20,7 +20,10 @@ body {
   @apply font-bold text-4xl mb-2 text-white;
 }
 .t-main-subtitle {
-  @apply  text-blue-50 mb-12;
+  @apply  text-blue-50 mt-4 mb-12;
+}
+.t-paragraph {
+  @apply text-cyan-100;
 }
 /* Form */
 
