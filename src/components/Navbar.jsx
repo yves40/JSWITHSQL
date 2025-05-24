@@ -10,7 +10,7 @@ export default function Navbar() {
     // u-main-container is defined in globals.css 
     <nav className=" fixed z-10 w-full bg-slate-50 border-b border-b-zinc-300">
       <div className="u-main-container flex py-4">
-          <Link href="/" className=" mr-6 text-zinc-900">Home</Link>
+          <Link href="/" className=" mr-6 text-zinc-900 mr-auto">Home</Link>
           <Link href="/connect" className=" mr-6 text-zinc-900">Connect</Link>
           <Link href="/disconnect" className=" mr-6 text-zinc-900">Disconnect</Link>
           <Link href="https://www.w3schools.com/nodejs/nodejs_mysql.asp" className=" mr-6 text-zinc-900" target="_blank">MySQL and Node.js</Link>

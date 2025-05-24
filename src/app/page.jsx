@@ -15,27 +15,27 @@ export default async function Home() {
           <span className="pr-4 mr-auto text-cyan-500">Mise en place de l'application de test Netxt.js</span> 
           <p className=" text-green-600 rounded-full font-bold text-lg">X</p>
         </li>
-        <li className="flex items-center pl-4 mt-2">
+        <li className="flex items-center pl-4 ">
           <span className="pr-4 mr-auto text-cyan-500">Mise en place d'un App context</span> 
           <p className=" text-red-500 rounded-full font-bold text-lg">X</p>
         </li>
-        <li className="flex items-center pl-4 mt-2">
+        <li className="flex items-center pl-4 ">
           <span className="pr-4 mr-auto text-cyan-500">Connection / disconnection</span> 
           <p className=" text-red-500 rounded-full font-bold text-lg">X</p>
         </li>
-        <li className="flex items-center pl-4 mt-2">
+        <li className="flex items-center pl-4 ">
           <span className="pr-4 mr-auto text-cyan-500">Select operations</span> 
           <p className=" text-red-500 rounded-full font-bold text-lg">X</p>
         </li>
-        <li className="flex items-center pl-4 mt-2">
+        <li className="flex items-center pl-4 ">
           <span className="pr-4 mr-auto text-cyan-500">Insert</span> 
           <p className=" text-red-500 rounded-full font-bold text-lg">X</p>
         </li>
-        <li className="flex items-center pl-4 mt-2">
+        <li className="flex items-center pl-4 ">
           <span className="pr-4 mr-auto text-cyan-500">Update</span> 
           <p className=" text-red-500 rounded-full font-bold text-lg">X</p>
         </li>
-        <li className="flex items-center pl-4 mt-2">
+        <li className="flex items-center pl-4 ">
           <span className="pr-4 mr-auto text-cyan-500">Delete</span> 
           <p className=" text-red-500 rounded-full font-bold text-lg">X</p>
         </li>
