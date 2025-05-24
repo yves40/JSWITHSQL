@@ -10,42 +10,34 @@ export default async function Home() {
     <div className="u-main-container u-padding-content-container">
       <h1 className="t-main-title underline">Test platform for MySQL</h1>
       <p className="t-main-subtitle">The idea is to code and test a few basic SQL access</p>
-      <ul lassName="t-paragraph">
+      <ul className="t-paragraph">
         <li className="flex items-center pl-4">
           <span className="pr-4 mr-auto text-cyan-500">Mise en place de l'application de test Netxt.js</span> 
-          <Image 
-            src="/svg/check-solid.svg" width={24} height={24} alt="" className=" text-green-500">
-          </Image>
+          <p className=" text-green-600 rounded-full font-bold text-lg">X</p>
         </li>
         <li className="flex items-center pl-4 mt-2">
           <span className="pr-4 mr-auto text-cyan-500">Mise en place d'un App context</span> 
-          <Image src="/svg/close.svg" width={24} height={24} alt="" className=" ">
-          </Image>
+          <p className=" text-red-500 rounded-full font-bold text-lg">X</p>
         </li>
         <li className="flex items-center pl-4 mt-2">
           <span className="pr-4 mr-auto text-cyan-500">Connection / disconnection</span> 
-          <Image src="/svg/close.svg" width={24} height={24} alt="" className=" ">
-          </Image>
+          <p className=" text-red-500 rounded-full font-bold text-lg">X</p>
         </li>
         <li className="flex items-center pl-4 mt-2">
           <span className="pr-4 mr-auto text-cyan-500">Select operations</span> 
-          <Image src="/svg/close.svg" width={24} height={24} alt="" className=" ">
-          </Image>
+          <p className=" text-red-500 rounded-full font-bold text-lg">X</p>
         </li>
         <li className="flex items-center pl-4 mt-2">
           <span className="pr-4 mr-auto text-cyan-500">Insert</span> 
-          <Image src="/svg/close.svg" width={24} height={24} alt="" className=" ">
-          </Image>
+          <p className=" text-red-500 rounded-full font-bold text-lg">X</p>
         </li>
         <li className="flex items-center pl-4 mt-2">
           <span className="pr-4 mr-auto text-cyan-500">Update</span> 
-          <Image src="/svg/close.svg" width={24} height={24} alt="" className=" ">
-          </Image>
+          <p className=" text-red-500 rounded-full font-bold text-lg">X</p>
         </li>
         <li className="flex items-center pl-4 mt-2">
           <span className="pr-4 mr-auto text-cyan-500">Delete</span> 
-          <Image src="/svg/close.svg" width={24} height={24} alt="">
-          </Image>
+          <p className=" text-red-500 rounded-full font-bold text-lg">X</p>
         </li>
       </ul>
       <p className="t-paragraph mt-8">
