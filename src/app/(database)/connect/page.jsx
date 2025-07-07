@@ -1,9 +1,12 @@
-import React from 'react'
+"use client"
+import { useState } from 'react';
 import { mysqlConnect } from '@/app/lib/server/db';
 
-export default async function ConnectDB() {
+export default function ConnectDB() {
 
-  const connectionstatus = await mysqlConnect(); 
+  const [state, setState ] = useState(0);
+
+  const connectionstatus = mysqlConnect(); 
 
   return (
     <div className="u-main-container u-padding-content-container">
