@@ -1,5 +1,3 @@
-"use server"
-
 const mysql = require('mysql');
 
 const dbhost = process.env.DBHOST;
@@ -9,7 +7,30 @@ const dbpass = process.env.DBPASS;
 let connection = null;
 
 export async function mysqlConnect() {
-      return { status: "connected" };
+  let con = mysql.createConnection({
+    host: dbhost,
+    port: dbport,
+    user: dbuser,
+    password: dbpass
+  });
+  await con.connect(function(err) {
+    if (err) {
+      return { 
+          status: "Disconnected" ,
+          message: err
+      };
+    }
+    else {
+      return { 
+          status: "Connected" ,
+          message: "No error"
+      };
+    }
+  });      
+  // return { 
+  //     status: "KAPUT" ,
+  //     message: "Kaput"
+  // };
 }
 
 export async function mysqlDisconnect() {

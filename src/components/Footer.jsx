@@ -5,7 +5,7 @@ function Footer() {
   return (
     <footer className=" text-center bg-white p-4 border-t border-t-zinc-300">
       <Link href="#">
-        MySQL tester &copy; : May 24 2025 : 1.01
+        MySQL tester &copy; : Jul 09 2025 : 1.03
       </Link>
     </footer>
   )
