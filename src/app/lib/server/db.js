@@ -15,40 +15,43 @@ export function mysqlConnect() {
   });
   // console.log(`************** Connect on ${dbhost}/${dbport}`);
   return new Promise((resolve, reject) => {
-  con.connect(function(err) {
-    if (err) {
-      reject({ 
-        error: true,
-          status: "Sorry, an error has been triggered" ,
-          message: err
-      }) 
-    }
-    else {
-      resolve({ 
-        error: false,
-          status: "Connected" ,
-          message: "No error"
-      }) 
-    }
-  });      
-
+    con.connect(function(err) {
+      if (err) {
+        reject({ 
+          error: true,
+            status: "Sorry, an error has been triggered" ,
+            message: err
+        }) 
+      }
+      else {
+        resolve({ 
+          error: false,
+            status: "Connected" ,
+            message: ""
+        }) 
+      }
+    });      
   })
 }
 
 export async function mysqlDisconnect() {
 
   if(connection) {
-    try {
-      connection.end((err) => {
-        if (err) throw err;
-        connection = null;
-        console.log(`************ Disconnected `); 
-        return { status: "Disconnected" };
-      });
-    }
-    catch(error) {
-      console.log(error.message);
-      return { status: "error" };    
-    }
+    return new Promise((resolve, reject) => {
+        connection.end((err) => {
+          if (err)
+            reject({ 
+              error: true,
+                status: "Disconnection failed" ,
+                message: err
+            }) 
+          connection = null;
+            resolve({ 
+              error: false,
+                status: "Disconnection" ,
+                message: ''
+            }) 
+        });
+    })
   }
 }

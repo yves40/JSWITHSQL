@@ -2,8 +2,16 @@ import React from 'react'
 import { mysqlDisconnect } from '@/app/lib/server/db';
 
 export default async function Disconnect() {
+  let message = 'No status right now';
   const connectionstatus = await mysqlDisconnect();
-  console.log(`******** Disconnection status : ${connectionstatus}`);
+  Promise.all([connectionstatus])
+  .then( (result) => {
+      message = "DisConnection OK"
+    })
+    .catch( result => {
+      message = "Disconnection failed "
+    }
+  )
   
   return (
     <div className="u-main-container u-padding-content-container">
