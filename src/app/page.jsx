@@ -1,12 +1,9 @@
 "use client";
 
-import { createContext } from "react";
 import Link from "next/link"
 import Image from "next/image";
 
-export const revalidate = 60;   // Check nextJS cache every minute
-
-export default async function Home() {
+export default function Home() {
 
   return (
     // u-main-container is defined in globals.css 

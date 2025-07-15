@@ -1,10 +1,16 @@
+"use client"
 
-
-import Link from "next/link"
+import Link from "next/link";
+import { useDbContext } from "@/app/DbContext";
 
 const modulename = 'Navbar.jsx # ';
 
 export default function Navbar() {
+
+  const databaseCtx = useDbContext();
+
+  console.log(`The DB server status is : ${databaseCtx.isConnected.dbConnected}`);
+  
 
   return (
     // u-main-container is defined in globals.css 

@@ -1,4 +1,7 @@
-const mysql = require('mysql');
+// const mysql = require('mysql');
+
+import pkg from "mysql";
+const mysql = pkg;
 
 const dbhost = process.env.DBHOST;
 const dbport = process.env.DBPORT;
@@ -13,7 +16,7 @@ export function mysqlConnect() {
     user: dbuser,
     password: dbpass
   });
-  // console.log(`************** Connect on ${dbhost}/${dbport}`);
+
   return new Promise((resolve, reject) => {
     con.connect(function(err) {
       if (err) {
