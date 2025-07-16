@@ -1,7 +1,4 @@
-// const mysql = require('mysql');
-
-import pkg from "mysql";
-const mysql = pkg;
+const mysql = require('mysql');
 
 const dbhost = process.env.DBHOST;
 const dbport = process.env.DBPORT;

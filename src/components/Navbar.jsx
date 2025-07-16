@@ -7,19 +7,27 @@ const modulename = 'Navbar.jsx # ';
 
 export default function Navbar() {
 
-  const databaseCtx = useDbContext();
+  const dbctx = useDbContext();
 
-  console.log(`The DB server status is : ${databaseCtx.isConnected.dbConnected}`);
-  
+  console.log(`The DB server status is : ${dbctx.isConnected.dbConnected}`);
 
   return (
     // u-main-container is defined in globals.css 
     <nav className=" fixed z-10 w-full bg-slate-50 border-b border-b-zinc-300">
       <div className="u-main-container flex py-4">
           <Link href="/" className=" mr-6 text-zinc-900 mr-auto">Home</Link>
-          <Link href="/connect" className=" mr-6 text-zinc-900">Connect</Link>
-          <Link href="/disconnect" className=" mr-6 text-zinc-900">Disconnect</Link>
-          <Link href="https://www.w3schools.com/nodejs/nodejs_mysql.asp" className=" mr-6 text-zinc-900" target="_blank">MySQL and Node.js</Link>
+          {!dbctx.isConnected.dbConnected.dbConnected && (
+            <>
+              <Link href="/connect" className=" mr-6 text-zinc-900">Connect</Link>
+            </>
+          )}
+          {dbctx.isConnected.dbConnected.dbConnected && (
+            <>
+              <Link href="/disconnect" className=" mr-6 text-zinc-900">Disconnect</Link>
+            </>
+          )}
+          <Link href="https://www.w3schools.com/nodejs/nodejs_mysql.asp" className=" mr-6 text-zinc-900" 
+                      target="_blank">MySQL and Node.js</Link>
           <Link href="https://nextjs.org/" className=" mr-6 text-zinc-900" target="_blank">Next.js</Link>
           <Link href="https://react.dev/" className=" mr-6 text-zinc-900" target="_blank">React</Link>
         </div>
