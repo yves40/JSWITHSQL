@@ -8,7 +8,7 @@ const modulename = 'Navbar.jsx # ';
 
 export default function Navbar() {
 
-  const {dbctx, toggleConnection}  = useContext(DbContext);
+  const {dbctx}  = useContext(DbContext);
 
   console.log(`The DB server status is : ${dbctx.connected}`);
 
