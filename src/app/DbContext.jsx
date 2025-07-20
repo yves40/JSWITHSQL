@@ -6,9 +6,9 @@ const DbContext =createContext();
 
 export function DbProvider({children}) {
 
-  const [isConnected, setIsConnected] = useState( {
+  const [dbctx, setDbctx] = useState( {
     loading: true,
-    dbConnected: false
+    Connected: false
   })
 
   // useEffect( () => {
@@ -23,7 +23,7 @@ export function DbProvider({children}) {
   // }, [])
 
   return (
-    <DbContext.Provider value={{isConnected, setIsConnected}}>
+    <DbContext.Provider value={{dbctx, setDbctx}}>
       {children}
     </DbContext.Provider>
   )
