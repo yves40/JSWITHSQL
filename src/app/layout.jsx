@@ -1,7 +1,7 @@
 import "./globals.css"
 import Footer from "@/components/Footer"
 import Navbar from "@/components/Navbar"
-import { DbProvider } from "@/app/DbContext"
+import { DbProvider } from "@/app/context/DbContext"
 
 export default function RootLayout({ children }) {
   return (

@@ -2,7 +2,7 @@
 import { mysqlConnect } from '@/app/lib/server/db';
 
 export default async function ConnectDB() {
-
+  
   let message = 'No status right now';
   const connectionstatus = mysqlConnect(); 
   Promise.all([connectionstatus])
