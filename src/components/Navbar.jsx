@@ -10,8 +10,6 @@ export default function Navbar() {
 
   const {dbctx}  = useContext(DbContext);
 
-  console.log(`The DB server status is : ${dbctx.connected}`);
-
   return (
     // u-main-container is defined in globals.css 
     <nav className=" fixed z-10 w-full bg-slate-50 border-b border-b-zinc-300">
