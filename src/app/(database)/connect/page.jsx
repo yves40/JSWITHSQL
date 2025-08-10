@@ -3,24 +3,38 @@ import { useContext, useEffect, useState } from 'react';
 import { DbContext } from '@/app/context/DbContext';
 import { mysqlConnect } from '@/app/lib/server/db';
 
+
+
 export default function connect() {
-  
-  const [ state, setState] = useState(
-    [
-      'Connection requested',
-      false
-    ]
+  const [ state, setState] = useState( 
+    [{
+      message: 'Connection requested',
+      connected: false,
+    }]
   );
-  
+
+  function getState() {
+    return state[0].connected;
+  }
+  function getMessage() {
+    return state[0].message;
+  }
+
   useEffect( () => {
-    if(!state.connected) {
+    if(!getState()) {
       mysqlConnect()
         .then( result => {
-          setState( ['Connected', true ])
+          setState( [{
+              message: `${result.message}`,
+              connected: true,
+            }]);
           console.log(result)
         })
         .catch( error => {
-          setState( ['Connection error', false ])
+          setState( [{
+              message: `${error.message}`,
+              connected: false,
+            }]);
           console.log(error)
         })
     }
@@ -32,7 +46,7 @@ export default function connect() {
   return (
     <div className="u-main-container u-padding-content-container">
       <span className=' text-cyan-100'>Connect DB</span>
-      <h2 className=' text-white'>{state}</h2>
+      <h2 className=' underline text-white'>{getMessage()}</h2>
     </div>
   )
 }

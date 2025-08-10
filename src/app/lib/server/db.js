@@ -1,35 +1,49 @@
 "use server"
 const mysql = require('mysql2/promise');
 
+
 const dbhost = process.env.DBHOST;
 const dbport = process.env.DBPORT;
-const DBNAME = process.env.DBNAME;
+const dbname = process.env.DBNAME;
 const dbuser = process.env.DBUSER;
 const dbpass = process.env.DBPASS;
 
 let connection = null;
 
 export async function mysqlConnect() {
-  try {
-    let connection = await mysql.createConnection({
+  const feedback = '';
+  return new Promise( (resolve, reject) => {
+    mysql.createConnection({
       host: dbhost, 
       port: dbport,
-      database: DBNAME,
-      user: dbuser,
+      database: dbname,
+      user: dbuser ,
       password: dbpass
-    });
-    const result = await connection.connect();
-    return {
-      status: true,
-      message: 'I am connected'
-    }
-  }
-  catch (err) {
-    return {
-      status: false,
-      error: err
-    }
-  }
+    })
+    .then(connection => {
+      connection.connect()
+      .then(result => {
+        resolve({
+          connected: true,
+          message: `Connected now with user ${dbuser} on DB: ${dbname}`
+        })
+      })
+      .catch(error => {
+        reject({
+          connected: false,
+          message: error,
+          techmessage: ''
+        })
+      })
+    })
+    .catch(error => { 
+        reject({
+          connected: false,
+          message: 'An error occured during connection',
+          techmessage: JSON.stringify(error)
+        })
+    })
+  })
 }
 
 export async function mysqlDisconnect() {
