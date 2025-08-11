@@ -35,7 +35,7 @@ export default function connect() {
               message: `${error.message}`,
               connected: false,
             }]);
-          console.log(error)
+          console.log(`***************** ${error}`);
         })
     }
   }, [])

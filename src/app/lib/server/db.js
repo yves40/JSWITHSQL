@@ -11,13 +11,12 @@ const dbpass = process.env.DBPASS;
 let connection = null;
 
 export async function mysqlConnect() {
-  const feedback = '';
   return new Promise( (resolve, reject) => {
     mysql.createConnection({
       host: dbhost, 
       port: dbport,
       database: dbname,
-      user: dbuser ,
+      user: dbuser + "lflfllf",
       password: dbpass
     })
     .then(connection => {
@@ -31,17 +30,15 @@ export async function mysqlConnect() {
       .catch(error => {
         reject({
           connected: false,
-          message: error,
+          message: 'Connection rejected',
           techmessage: ''
         })
       })
     })
     .catch(error => { 
-        reject({
-          connected: false,
-          message: 'An error occured during connection',
-          techmessage: JSON.stringify(error)
-        })
+      console.log(`***************** ${error.message}`);
+        // reject(new Error('Connection rejected'))
+        reject(new Error(error.message))
     })
   })
 }
