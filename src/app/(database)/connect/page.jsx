@@ -9,6 +9,7 @@ export default function connect() {
   const [appMessage, setappMessage] = useState('Connection requested');
   const [dbMessage, setdbMessage] = useState('No problemo');
   const [first, setFirst] = useState(true);
+  const [count, setCount] = useState(0);
 
   useEffect( () => {
       if(!state) {
@@ -29,10 +30,14 @@ export default function connect() {
         })
       }
       else {
-        setappMessage('Already connected');
+        setCount((count) => {
+          count++;
+          return count;
+        });
+        setappMessage(`Already connected : ${count}`);
       }
       setFirst(false);
-  }, [])
+  }, [ state, appMessage, dbMessage])
 
   // const dbctx = useContext(DbContext);
   // console.log(dbctx);

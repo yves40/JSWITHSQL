@@ -20,11 +20,6 @@ export default function Navbar() {
               <Link href="/connect" className=" mr-6 text-zinc-900">Connect</Link>
             </>
           )}
-          {dbctx.connected && (
-            <>
-              <Link href="/disconnect" className=" mr-6 text-zinc-900">Disconnect</Link>
-            </>
-          )}
           <Link href="https://www.w3schools.com/nodejs/nodejs_mysql.asp" className=" mr-6 text-zinc-900" 
                       target="_blank">MySQL and Node.js</Link>
           <Link href="https://nextjs.org/" className=" mr-6 text-zinc-900" target="_blank">Next.js</Link>

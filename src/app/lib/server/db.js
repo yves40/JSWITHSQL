@@ -39,19 +39,3 @@ export async function mysqlConnect() {
     })
   })
 }
-// ---------------------------------------------------------------------------------
-export async function mysqlDisconnect() {
-  try {
-    let connection = await mysql.quit();
-    return {
-      status: true,
-      message: 'Disconnected'
-    }
-  }
-  catch (err) {
-    return {
-      status: false,
-      error: err
-    }
-  }
-}
