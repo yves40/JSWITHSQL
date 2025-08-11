@@ -8,41 +8,38 @@ const dbname = process.env.DBNAME;
 const dbuser = process.env.DBUSER;
 const dbpass = process.env.DBPASS;
 
-let connection = null;
+let statusmessage = '';
+let dbmessage = '';
+let isconnected = false;
+let theconnection = null;
 
+// ---------------------------------------------------------------------------------
 export async function mysqlConnect() {
   return new Promise( (resolve, reject) => {
     mysql.createConnection({
       host: dbhost, 
       port: dbport,
       database: dbname,
-      user: dbuser + "lflfllf",
+      user: dbuser,
       password: dbpass
     })
     .then(connection => {
-      connection.connect()
-      .then(result => {
-        resolve({
-          connected: true,
-          message: `Connected now with user ${dbuser} on DB: ${dbname}`
-        })
+        theconnection = connection;
+        isconnected = true;
+        statusmessage = `Connected now with user ${dbuser} on DB: ${dbname}`;
+        resolve(statusmessage);
       })
-      .catch(error => {
-        reject({
-          connected: false,
-          message: 'Connection rejected',
-          techmessage: ''
-        })
-      })
-    })
     .catch(error => { 
-      console.log(`***************** ${error.message}`);
-        // reject(new Error('Connection rejected'))
-        reject(new Error(error.message))
+        theconnection = null;
+        isconnected = false;
+        statusmessage = 'Connection rejected';
+        dbmessage = error.message;
+        reject(new Error(statusmessage +  '@***@' + dbmessage ));
+        // reject(new Error(statusmessage, { cause: dbmessage} ));
     })
   })
 }
-
+// ---------------------------------------------------------------------------------
 export async function mysqlDisconnect() {
   try {
     let connection = await mysql.quit();
