@@ -39,3 +39,27 @@ export async function mysqlConnect() {
     })
   })
 }
+
+export async function mysqlConnect2() {
+    const connresult = mysql.createConnection({
+      host: dbhost, 
+      port: dbport,
+      database: dbname,
+      user: dbuser,
+      password: dbpass
+    })
+    return Promise.all([connresult]).then(connection => {
+        theconnection = connection;
+        isconnected = true;
+        statusmessage = `Connected now with user ${dbuser} on DB: ${dbname}`;
+        console.log(statusmessage);
+        Promise.resolve(statusmessage);
+      })
+    .catch(error => { 
+        theconnection = null;
+        isconnected = false;
+        statusmessage = 'Connection rejected';
+        dbmessage = error.message;
+        Promise.reject(new Error(statusmessage +  '@***@' + dbmessage ));
+    })
+}

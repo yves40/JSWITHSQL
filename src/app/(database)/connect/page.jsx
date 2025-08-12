@@ -1,7 +1,7 @@
 "use client"
 import { useContext, useEffect, useState } from 'react';
 import { DbContext } from '@/app/context/DbContext';
-import { mysqlConnect} from '@/app/lib/server/db';
+import { mysqlConnect, mysqlConnect2} from '@/app/lib/server/db';
 
 export default function connect() {
 
@@ -13,7 +13,7 @@ export default function connect() {
 
   useEffect( () => {
       if(!state) {
-        mysqlConnect()
+        mysqlConnect2()
         .then( result => {
           console.log(result);
           setState(true);
@@ -30,10 +30,6 @@ export default function connect() {
         })
       }
       else {
-        setCount((count) => {
-          count++;
-          return count;
-        });
         setappMessage(`Already connected : ${count}`);
       }
       setFirst(false);
