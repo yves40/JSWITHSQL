@@ -62,3 +62,5 @@ Promise.all([SEVEN, EIGHT, NINE])
   .then( (result) => console.log(result))
   .catch( (error) => console.log(error));
 
+
+
