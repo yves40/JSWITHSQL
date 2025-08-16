@@ -38,13 +38,16 @@ mysql.createConnection({
 .then(connection => {
     theconnection = connection;
     console.log(`Connected now with user ${dbuser} on DB: ${dbname}`);
+    // *********
     selectSomeUser().then( result => {
       console.log(result);
       // Now test a pool
       getPool().then( result => {
+      // *********
         selectSomeUserWithPool().then( result  => {
           console.log(`Everything went fine with the pool`);
-          selectSomeUserWithPoolManual().then(
+        // *********
+        selectSomeUserWithPoolManual().then(
             result  => {
               console.log(`Everything went fine with the manual pool`);
               process.exit(0);
@@ -85,7 +88,7 @@ async function selectSomeUser() {
 // ----------------------------------------------------------------------------------------
 async function selectSomeUserWithPool() {
     try {
-      const [ rows, field ] = await thepool.query("SELECT * FROM users");
+      const [ rows, field ] = await thepool.query("SELECT * FROM userss");
       rows.forEach(element => {
         console.log(`POOL : ${element.firstname} ${element.lastname} email is ${element.email}`);      
       });
