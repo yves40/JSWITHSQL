@@ -14,7 +14,7 @@
 "use strict";
 
 
-const sql = (function () {
+const moduletemplate = (function () {
 
     //---------------- MODULE SCOPE VARIABLES --------------
 
@@ -37,4 +37,4 @@ const sql = (function () {
     };
 }());
 
-export { sql as sqlutils } ;
+export { moduletemplate as moduletemplate } ;

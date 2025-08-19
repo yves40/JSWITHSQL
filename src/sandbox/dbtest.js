@@ -1,6 +1,6 @@
 import mysqlPromise from "mysql2/promise.js";
 import dotenv from 'dotenv';
-import  { sqlutils } from './moduletemplate.js';
+import { moduletemplate } from './moduletemplate.js';
 
 dotenv.config({ quiet: true });
 
@@ -13,7 +13,7 @@ const dbpass = process.env.DBPASS;
 
 // Test with module
 
-console.log(sqlutils.getVersion());
+console.log(moduletemplate.getVersion());
 
 
 // ----------------------------------------------------------------------------------------
