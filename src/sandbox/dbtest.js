@@ -1,6 +1,7 @@
 import mysqlPromise from "mysql2/promise.js";
 import dotenv from 'dotenv';
-import { moduletemplate } from './moduletemplate.js';
+import  { moduletemplate, sharedidentity }  from './moduletemplate.js';
+import  { moduleSQL}  from './moduleSQL.js';
 
 dotenv.config({ quiet: true });
 
@@ -11,9 +12,14 @@ const dbuser = process.env.DBUSER;
 const dbpass = process.env.DBPASS;
 
 
-// Test with module
+// Test module
 
 console.log(moduletemplate.getVersion());
+// console.log(moduletemplate.privateTest()); Inaccessible as not exported by module
+console.log(moduletemplate.Version);
+console.log(sharedidentity);
+console.log(moduleSQL.getVersion());
+
 
 
 // ----------------------------------------------------------------------------------------

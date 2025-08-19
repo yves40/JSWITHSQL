@@ -1,24 +1,14 @@
 /*------------------------------------------------------------------------------------------------------
- *          template.js
+ *          moduleSQL.js
  *          
- *          Feb 14 2018     Initial
- *          Feb 17 2018     WIP on template content and test it
- *          Aug 19 2025     Back to some best practices
+ *          Aug 19 2025     Initial
  ------------------------------------------------------------------------------------------------------*/
-/*jslint    browser : true, continue : true,
-            devel : true, indent : 2, maxerr : 50,
-            newcap : true, nomen : true, plusplus : true,
-            regexp : true, sloppy : true, vars : false,
-            white : true
- */
 "use strict";
 
-const sharedidentity = 'Shared global : Yves is a great programmer ;-)'
-
-const moduletemplate = (function () {
+const moduleSQL = (function () {
 
     //---------------- MODULE SCOPE VARIABLES --------------
-    const Version = "moduletemplate.js Aug 19 2025, 1.01";
+    const Version = "moduleSQL.js Aug 19 2025, 1.01";
     //------------------- EVENT HANDLERS -------------------
 
     //--------------------- DOM METHODS --------------------
@@ -40,6 +30,5 @@ const moduletemplate = (function () {
 }());
 
 export { 
-    moduletemplate as moduletemplate,  
-    sharedidentity as sharedidentity
+    moduleSQL as moduleSQL,  
 };
