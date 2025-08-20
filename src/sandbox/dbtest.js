@@ -3,6 +3,11 @@ import  { moduleSQL}  from './moduleSQL.js';
 console.log(`\nCurrent version of the sql module : ${moduleSQL.getVersion()} \n\n` );
 
 let action1, action2;
+const waiting = new Promise((res, rej) => {
+  setTimeout(() => {
+    res('Delay expired');
+  }, 5000);
+})
 
 // Direct connection mode
 moduleSQL.createConnection()
@@ -43,4 +48,10 @@ moduleSQL.createPool()
   });
 
 // Wait for all tsaks to finish
-Promise.all([action1, action2]).then( () => process.exit(0));
+Promise.all([action1, action2, waiting]).then(
+  (result) => {
+    console.log(result);
+    
+  process.exit(0)
+  } 
+);
