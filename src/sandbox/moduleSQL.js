@@ -77,37 +77,35 @@ const moduleSQL = (function () {
     // -----------------------------------------------------
     async function select(query) {
       return new Promise((res, rej) => {
-        try {
-          (async () => {
-            const [ rows, field ] = await connection.query(query);
-            rows.forEach(element => {
-              console.log(`DIRECT : ${element.firstname} ${element.lastname} email is ${element.email}`);      
-            });
-            res('Everything went fine in direct mode');
-          })();
-        }
-        catch(err) {
-          console.log(err);
-          rej('Got a problem here');
-        }
+        (async () => {
+            try {
+              const [ rows, field ] = await connection.query(query);
+              rows.forEach(element => {
+                console.log(`DIRECT : ${element.firstname} ${element.lastname} email is ${element.email}`);      
+              });
+              res('DIRECT : Everything went fine in direct mode');
+            }
+            catch(err) {
+              rej(`DIRECT : Got a problem here : ${err.message}`);
+            }
+        })();
       })
     }
     // -----------------------------------------------------
     async function poolSelect(query) {
       return new Promise((res, rej) => {
-        try {
-          (async () => {
-            const [ rows, field ] = await pool.query(query);
-            rows.forEach(element => {
-              console.log(`POOL : ${element.firstname} ${element.lastname} email is ${element.email}`);      
-            });
-            res('Everything went fine in pooling mode');
-          })();
-        }
-        catch(err) {
-          console.log(err);
-          rej('Got a problem with pooling');
-        }
+        (async () => {
+            try {
+              const [ rows, field ] = await pool.query(query);
+              rows.forEach(element => {
+                console.log(`POOL: ${element.firstname} ${element.lastname} email is ${element.email}`);      
+              });
+              res('POOL: Everything went fine in pooled mode');
+            }
+            catch(err) {
+              rej(`POOL: Got a problem here : ${err.message}`);
+            }
+        })();
       })
     }
     // -----------------------------------------------------

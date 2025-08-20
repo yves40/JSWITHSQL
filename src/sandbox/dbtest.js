@@ -17,6 +17,9 @@ cc.then( message =>  {
       .then( message => {
         console.log(message);
       })
+      .catch( (error) => {
+        console.log(error);
+      })
   })
   .catch( error => {
     console.log(error);
@@ -30,6 +33,9 @@ cp.then(
     action2 = moduleSQL.poolSelect("SELECT * FROM users order by firstname")
       .then( message => {
         console.log(message);
+      })
+      .catch( (error) => {
+        console.log(error);
       })
   })
   .catch(error => {
