@@ -20,7 +20,7 @@ const dbpass = process.env.DBPASS;
 const moduleSQL = (function () {
 
     //---------------- MODULE SCOPE VARIABLES --------------
-    const Version = "moduleSQL.js Aug 20 2025, 1.04";
+    const Version = "moduleSQL.js Aug 20 2025, 1.05";
     let connection = null;
     let pool = null;
     //------------------- PRIVATE METHODS ------------------
@@ -30,6 +30,9 @@ const moduleSQL = (function () {
     // -----------------------------------------------------
     function createConnection() {
       return new Promise((resolve, reject) => {
+        if(connection !== null) {
+          resolve('Connection alread acquired');
+        }
         mysqlPromise.createConnection({
           host: dbhost, 
           port: dbport,
@@ -50,6 +53,9 @@ const moduleSQL = (function () {
     // -----------------------------------------------------
     function createPool() {
       return new Promise((resolve, reject) => {
+        if(pool !== null) {
+          resolve('Pool already acquired');
+        }
         try {
           pool = mysqlPromise.createPool({
              host: dbhost, 
@@ -77,18 +83,25 @@ const moduleSQL = (function () {
     // -----------------------------------------------------
     async function select(query) {
       return new Promise((res, rej) => {
-        (async () => {
+        if(connection === null) {
+          createConnection()
+            .then( result => {
+              getData();
+            })
+        }
+        else {
+          getData();
+        }
+        async function getData() {
             try {
               const [ rows, field ] = await connection.query(query);
-              rows.forEach(element => {
-                console.log(`DIRECT : ${element.firstname} ${element.lastname} email is ${element.email}`);      
-              });
-              res('DIRECT : Everything went fine in direct mode');
+              rows.push('DIRECT: Everything went fine in direct mode');
+              res(rows);
             }
             catch(err) {
               rej(`DIRECT : Got a problem here : ${err.message}`);
             }
-        })();
+        };
       })
     }
     // -----------------------------------------------------
@@ -97,10 +110,8 @@ const moduleSQL = (function () {
         (async () => {
             try {
               const [ rows, field ] = await pool.query(query);
-              rows.forEach(element => {
-                console.log(`POOL: ${element.firstname} ${element.lastname} email is ${element.email}`);      
-              });
-              res('POOL: Everything went fine in pooled mode');
+              rows.push('POOL: Everything went fine in pooled mode');
+              res(rows);
             }
             catch(err) {
               rej(`POOL: Got a problem here : ${err.message}`);
