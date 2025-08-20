@@ -24,7 +24,15 @@ const moduleSQL = (function () {
     let connection = null;
     let pool = null;
     //------------------- PRIVATE METHODS ------------------
-
+    async function getData(query, res, rej, conn = connection ) {
+        try {
+          const [ rows ] = await conn.query(query);
+          res(rows);
+        }
+        catch(err) {
+          rej(`Got a problem here : ${err.message}`);
+        }
+    }
     //------------------- PUBLIC METHODS -------------------
     function getVersion()  { return Version; }
     // -----------------------------------------------------
@@ -84,22 +92,12 @@ const moduleSQL = (function () {
         if(connection === null) {
           createConnection()
             .then( result => {
-              getData();
+              getData(query, res, rej);
             })
         }
         else {
-          getData();
+          getData(query, res, rej);
         }
-        async function getData() {
-            try {
-              const [ rows, field ] = await connection.query(query);
-              rows.push('DIRECT: Everything went fine in direct mode');
-              res(rows);
-            }
-            catch(err) {
-              rej(`DIRECT : Got a problem here : ${err.message}`);
-            }
-        };
       })
     }
     // -----------------------------------------------------
@@ -108,22 +106,12 @@ const moduleSQL = (function () {
         if(pool === null ) {
           createPool()
           .then( result => {
-            getPoolData();
+            getData(query, res, rej, pool );
           })
         }
         else {
-          getPoolData();
+          getData(query, res, rej, pool);
         }
-        async function getPoolData() {
-            try {
-              const [ rows, field ] = await pool.query(query);
-              rows.push('POOL: Everything went fine in pooled mode');
-              res(rows);
-            }
-            catch(err) {
-              rej(`POOL: Got a problem here : ${err.message}`);
-            }
-        };
       })
     }
     // -----------------------------------------------------
