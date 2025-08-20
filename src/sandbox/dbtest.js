@@ -10,37 +10,27 @@ const waiting = new Promise((res, rej) => {
 })
 
 // Direct connection mode
-moduleSQL.createConnection()
-  .then( message =>  {
+const cc = moduleSQL.createConnection();
+cc.then( message =>  {
     console.log(message);
     action1 = moduleSQL.select("SELECT * FROM users")
-      .then( result =>  { 
-        console.log(result);
-        // process.exit(0);
+      .then( message => {
+        console.log(message);
       })
-      .catch( error => {
-        console.log(error);
-        process.exit(1);
-      });
   })
   .catch( error => {
     console.log(error);
     process.exit(1);
   });
 // Pooling mode
-moduleSQL.createPool()
-  .then(
+const cp = moduleSQL.createPool();
+cp.then(
     message =>  {
     console.log(message);
-    action2 = moduleSQL.poolSelect("SELECT * FROM users order by lastname")
-      .then( result =>  { 
-        console.log(result);
-        // process.exit(0);
+    action2 = moduleSQL.poolSelect("SELECT * FROM users order by firstname")
+      .then( message => {
+        console.log(message);
       })
-      .catch( error => {
-        console.log(error);
-        process.exit(1);
-      });
   })
   .catch(error => {
     console.log(error);
@@ -50,8 +40,7 @@ moduleSQL.createPool()
 // Wait for all tsaks to finish
 Promise.all([action1, action2, waiting]).then(
   (result) => {
-    console.log(result);
-    
-  process.exit(0)
+    console.log(result);    
+    process.exit(0)
   } 
 );

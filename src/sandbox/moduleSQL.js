@@ -20,7 +20,7 @@ const dbpass = process.env.DBPASS;
 const moduleSQL = (function () {
 
     //---------------- MODULE SCOPE VARIABLES --------------
-    const Version = "moduleSQL.js Aug 19 2025, 1.03";
+    const Version = "moduleSQL.js Aug 20 2025, 1.04";
     let connection = null;
     let pool = null;
     //------------------- PRIVATE METHODS ------------------
@@ -76,31 +76,39 @@ const moduleSQL = (function () {
     }
     // -----------------------------------------------------
     async function select(query) {
+      return new Promise((res, rej) => {
         try {
-          const [ rows, field ] = await connection.query(query);
-          rows.forEach(element => {
-            console.log(`DIRECT : ${element.firstname} ${element.lastname} email is ${element.email}`);      
-          });
-          return Promise.resolve('Everything went fine in direct mode');
+          (async () => {
+            const [ rows, field ] = await connection.query(query);
+            rows.forEach(element => {
+              console.log(`DIRECT : ${element.firstname} ${element.lastname} email is ${element.email}`);      
+            });
+            res('Everything went fine in direct mode');
+          })();
         }
         catch(err) {
           console.log(err);
-          return Promise.reject('Got a problem here');
+          rej('Got a problem here');
         }
+      })
     }
     // -----------------------------------------------------
     async function poolSelect(query) {
+      return new Promise((res, rej) => {
         try {
-          const [ rows, field ] = await pool.query(query);
-          rows.forEach(element => {
-            console.log(`POOL : ${element.firstname} ${element.lastname} email is ${element.email}`);      
-          });
-          return Promise.resolve('Everything went fine in pooling mode');
+          (async () => {
+            const [ rows, field ] = await pool.query(query);
+            rows.forEach(element => {
+              console.log(`POOL : ${element.firstname} ${element.lastname} email is ${element.email}`);      
+            });
+            res('Everything went fine in pooling mode');
+          })();
         }
         catch(err) {
           console.log(err);
-          return Promise.reject('Got a problem with pooling');
+          rej('Got a problem with pooling');
         }
+      })
     }
     // -----------------------------------------------------
     // What is exposed outside module ? 
