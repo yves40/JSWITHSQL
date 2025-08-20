@@ -2,11 +2,16 @@ import  { moduleSQL}  from './moduleSQL.js';
 import timeHelper from './timeHelper.js'
 import Logger from './logger.js';
 
-console.log(`\nCurrent version of the sql module : ${moduleSQL.getVersion()} \n\n` );
+// Use the old logger
+const logger = new Logger();
+
+console.log('\n\n');
+logger.info(`Current version of the sql module : ${moduleSQL.getVersion()}` );
+console.log('\n\n');
 
 const waiting = new Promise((res, rej) => {
   setTimeout(() => {
-    res('Delay expired');
+    res('[waiting] Delay expired');
   }, 8000);
 })
 
@@ -49,26 +54,23 @@ cp.then(
     console.log(error);
     process.exit(1);
   });
-// Yet another query on dblog
-// Use the old logger
-const logger = new Logger();
-logger.debug(`Now select few rows from the dblog table`)
-moduleSQL.select("SELECT * FROM dblog order by logtime desc limit 10")
-  .then( (payload) => {
-    const th = new timeHelper();
-    console.log(`\n****** ${payload.pop()}\n`);
-    payload.forEach(element => {
-      console.log(`DBLOG : ${logger.levelToString(element.severity)} ${element.message} : ${th.getDateTimeFromDate(element.logtime)}`);      
-    });
-  })
-  .catch( (error) => {
-    console.log(error);
-  })
 
-// Wait for all tasks to finish
-Promise.all([waiting]).then(
-  (result) => {
-    console.log(result);    
-    process.exit(0)
+// Wait for previous tasks to finish
+Promise.all([waiting]).then((result) => {
+    // Yet another query on dblog
+    logger.debug(`Now select few rows from the dblog table`)
+    moduleSQL.select("SELECT * FROM dblog order by logtime desc limit 10")
+      .then( (payload) => {
+        const th = new timeHelper();
+        console.log(`\n****** ${payload.pop()}\n`);
+        payload.forEach(element => {
+          console.log(`DBLOG : ${logger.levelToString(element.severity)} ${element.message} : ${th.getDateTimeFromDate(element.logtime)}`);      
+        });
+        console.log('\n\n');
+        process.exit(0);
+      })
+      .catch( (error) => {
+        console.log(error);
+      })
   } 
 );

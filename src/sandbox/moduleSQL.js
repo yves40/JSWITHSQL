@@ -42,11 +42,10 @@ const moduleSQL = (function () {
         })
         .then(result => {
           connection = result;
-          resolve('Connection acquired');
+          resolve('[createConnection] Connection acquired');
         })
         .catch( error => {
-          console.log(`KO error : ${error}`);
-          reject(`Got a problem with connection ${error}`);
+          reject(`[createConnection] Got a problem with connection ${error}`);
         })
       })
     }
@@ -72,11 +71,10 @@ const moduleSQL = (function () {
              charset: 'utf8mb4',
              keepAliveInitialDelay: 0,
            })
-           resolve('Connection pool acquired');
+           resolve('[createPool] Connection pool acquired');
         }
         catch( error ) {
-          console.log(`KO error : ${error}`);
-          reject(`Got a problem with connection pooling ${error}`);
+          reject(`[createPool] Got a problem with connection pooling ${error}`);
         }
       })
     }
@@ -107,7 +105,16 @@ const moduleSQL = (function () {
     // -----------------------------------------------------
     async function poolSelect(query) {
       return new Promise((res, rej) => {
-        (async () => {
+        if(pool === null ) {
+          createPool()
+          .then( result => {
+            getPoolData();
+          })
+        }
+        else {
+          getPoolData();
+        }
+        async function getPoolData() {
             try {
               const [ rows, field ] = await pool.query(query);
               rows.push('POOL: Everything went fine in pooled mode');
@@ -116,7 +123,7 @@ const moduleSQL = (function () {
             catch(err) {
               rej(`POOL: Got a problem here : ${err.message}`);
             }
-        })();
+        };
       })
     }
     // -----------------------------------------------------
