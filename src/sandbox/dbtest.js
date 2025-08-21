@@ -1,11 +1,14 @@
 import  { moduleSQL}  from './moduleSQL.js';
 import timeHelper from '../classes/timeHelper.js'
 import Logger from '../classes/logger.js';
+import Timer from '../classes/timer.js';
 
 // Use the old logger
 const logger = new Logger('dbtest');
+const timer = new Timer();
 
 console.log('\n\n');
+timer.startTimer();
 logger.info(`Current version of the sql module : ${moduleSQL.getVersion()}` );
 console.log('\n\n');
 
@@ -13,7 +16,7 @@ console.log('\n\n');
 const waiting = new Promise((res, rej) => {
   setTimeout(() => {
     res('[waiting] Delay expired');
-  }, 2000);
+  }, 8000);
 })
 
 // ------------------------------------------------------------
@@ -46,9 +49,7 @@ moduleSQL.poolSelect("SELECT * FROM users order by firstname")
   })
 // ------------------------------------------------------------
 // Test a bind query
-moduleSQL.poolSelect("SELECT * FROM users where firstname like ? order by firstname",
-                        ['y%']
-)
+moduleSQL.poolSelect("SELECT * FROM users where firstname like ? order by firstname",['y%'])
   .then( payload => {
     payload.forEach(element => {
       console.log(`USERS : [${element.id}] ${element.firstname} ${element.lastname} email is ${element.email}`);      
@@ -63,13 +64,13 @@ moduleSQL.poolSelect("SELECT * FROM users where firstname like ? order by firstn
 // ------------------------------------------------------------
 // Test a join
 const joinquery = 'SELECT u.email, rl.name, rl.level \
-FROM users u, users_roles r, roles rl \
-WHERE u.id = r.users_id and rl.id = r.roles_id'
+                    FROM users u, users_roles r, roles rl \
+                    WHERE u.id = r.users_id and rl.id = r.roles_id'
 
 moduleSQL.poolSelect(joinquery)
   .then( payload => {
     payload.forEach(element => {
-      console.log(`USERS ROLES : [${element.email}] ${element.name} ${element.level} `);      
+      console.log(`USERS ROLES : [${element.email}] \t\t ${element.name} \t ${element.level} `);      
     });
     console.log('\n');
     logger.info(`Users roles\n`);
@@ -94,6 +95,9 @@ Promise.all([waiting]).then((result) => {
           console.log(`DBLOG : ${logger.levelToString(element.severity)} ${element.message} : ${th.getDateTimeFromDate(element.logtime)}`);      
         });
         console.log('\n\n');
+        // Some time report
+        timer.stopTimer();
+        logger.info(`The total time for this run is:  ${timer.getElapsedString()}`)
         process.exit(0);
       })
       .catch( (error) => {
