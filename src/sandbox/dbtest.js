@@ -9,17 +9,19 @@ console.log('\n\n');
 logger.info(`Current version of the sql module : ${moduleSQL.getVersion()}` );
 console.log('\n\n');
 
+// ------------------------------------------------------------
 const waiting = new Promise((res, rej) => {
   setTimeout(() => {
     res('[waiting] Delay expired');
   }, 2000);
 })
 
+// ------------------------------------------------------------
 // Direct connection mode
 moduleSQL.select("SELECT * FROM users")
     .then( (payload) => {
       payload.forEach(element => {
-        console.log(`USERS : ${element.firstname} ${element.lastname} email is ${element.email}`);      
+        console.log(`USERS : [${element.id}]  ${element.firstname} ${element.lastname} email is ${element.email}`);      
       });
       console.log('\n');
       logger.info(`Users selected with direct connection query\n`);
@@ -28,11 +30,12 @@ moduleSQL.select("SELECT * FROM users")
       console.log('\n');
       logger.error(`${error}\n`);
     })
+// ------------------------------------------------------------
 // Pooling mode
 moduleSQL.poolSelect("SELECT * FROM users order by firstname")
   .then( payload => {
     payload.forEach(element => {
-      console.log(`USERS : ${element.firstname} ${element.lastname} email is ${element.email}`);      
+      console.log(`USERS : [${element.id}] ${element.firstname} ${element.lastname} email is ${element.email}`);      
     });
     console.log('\n');
     logger.info(`Users selected with a pooled connection query\n`);
@@ -41,7 +44,44 @@ moduleSQL.poolSelect("SELECT * FROM users order by firstname")
       console.log('\n');
       logger.error(`${error}\n`);
   })
+// ------------------------------------------------------------
+// Test a bind query
+moduleSQL.poolSelect("SELECT * FROM users where firstname like ? order by firstname",
+                        ['y%']
+)
+  .then( payload => {
+    payload.forEach(element => {
+      console.log(`USERS : [${element.id}] ${element.firstname} ${element.lastname} email is ${element.email}`);      
+    });
+    console.log('\n');
+    logger.info(`Users with fisrt name like 'y'\n`);
+  })
+  .catch( (error) => {
+      console.log('\n');
+      logger.error(`${error}\n`);
+  })
+// ------------------------------------------------------------
+// Test a join
+const joinquery = 'SELECT u.email, rl.name, rl.level \
+FROM users u, users_roles r, roles rl \
+WHERE u.id = r.users_id and rl.id = r.roles_id'
 
+moduleSQL.poolSelect(joinquery)
+  .then( payload => {
+    payload.forEach(element => {
+      console.log(`USERS ROLES : [${element.email}] ${element.name} ${element.level} `);      
+    });
+    console.log('\n');
+    logger.info(`Users roles\n`);
+  })
+  .catch( (error) => {
+      console.log('\n');
+      logger.error(`${error}\n`);
+  })
+
+
+
+// ------------------------------------------------------------
 // Wait for previous tasks to finish
 Promise.all([waiting]).then((result) => {
     // Yet another query on dblog

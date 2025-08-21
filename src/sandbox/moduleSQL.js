@@ -20,14 +20,20 @@ const dbpass = process.env.DBPASS;
 const moduleSQL = (function () {
 
     //---------------- MODULE SCOPE VARIABLES --------------
-    const Version = "moduleSQL.js Aug 20 2025, 1.05";
+    const Version = "moduleSQL.js Aug 21 2025, 1.06";
     let connection = null;
     let pool = null;
     //------------------- PRIVATE METHODS ------------------
-    async function getData(query, res, rej, conn = connection ) {
+    async function getData(query, res, rej, conn = connection,  params ) {
         try {
-          const [ rows ] = await conn.query(query);
-          res(rows);
+          if(params === null) {
+            const [ rows ] = await conn.query(query);
+            res(rows);
+          }
+          else {
+            const [ rows ] = await conn.query(query, params);
+            res(rows);
+          }
         }
         catch(err) {
           rej(`Got a problem here : ${err.message}`);
@@ -39,7 +45,7 @@ const moduleSQL = (function () {
     function createConnection() {
       return new Promise((resolve, reject) => {
         if(connection !== null) {
-          resolve('Connection alread acquired');
+          resolve('Connection already acquired');
         }
         mysqlPromise.createConnection({
           host: dbhost, 
@@ -94,6 +100,9 @@ const moduleSQL = (function () {
             .then( result => {
               getData(query, res, rej);
             })
+            .catch(error => {
+              console.log(error);
+            })
         }
         else {
           getData(query, res, rej);
@@ -101,16 +110,19 @@ const moduleSQL = (function () {
       })
     }
     // -----------------------------------------------------
-    async function poolSelect(query) {
+    async function poolSelect(query, params = null) {
       return new Promise((res, rej) => {
         if(pool === null ) {
           createPool()
-          .then( result => {
-            getData(query, res, rej, pool );
-          })
+            .then( result => {
+              getData(query, res, rej, pool, params  );
+            })
+            .catch(error => {
+              console.log(error);              
+            })
         }
         else {
-          getData(query, res, rej, pool);
+          getData(query, res, rej, pool, params);
         }
       })
     }
