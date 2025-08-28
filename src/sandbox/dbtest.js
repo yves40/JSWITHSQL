@@ -7,12 +7,14 @@ import Timer from '../classes/timer.js';
 const logger = new Logger('dbtest');
 const timer = new Timer();
 const th = new timeHelper()
-const DELAY = 6000;
+const DELAY = 3000;
 
 console.log('\n\n');
 timer.startTimer();
+logger.setDatabaseTrace(true);
 logger.info(`Current version of the sql module : ${moduleSQL.getVersion()}` );
 console.log('\n\n');
+
 
 // ------------------------------------------------------------
 const waiting = new Promise((res, rej) => {
@@ -29,11 +31,11 @@ moduleSQL.select("SELECT * FROM users")
         console.log(`USERS : [${element.id}]  ${element.firstname} ${element.lastname} email is ${element.email}`);      
       });
       console.log('\n');
-      logger.info(`Users selected with direct connection query\n`);
+      logger.info(`Users selected with direct connection query`);
     })
     .catch( (error) => {
       console.log('\n');
-      logger.error(`${error}\n`);
+      logger.error(`${error}`);
     })
 // ------------------------------------------------------------
 // Pooling mode
@@ -43,11 +45,11 @@ moduleSQL.poolSelect("SELECT * FROM users order by firstname")
       console.log(`USERS : [${element.id}] ${element.firstname} ${element.lastname} email is ${element.email}`);      
     });
     console.log('\n');
-    logger.info(`Users selected with a pooled connection query\n`);
+    logger.info(`Users selected with a pooled connection query`);
   })
   .catch( (error) => {
       console.log('\n');
-      logger.error(`${error}\n`);
+      logger.error(`${error}`);
   })
 // ------------------------------------------------------------
 // Test a bind query
@@ -57,11 +59,11 @@ moduleSQL.poolSelect("SELECT * FROM users where firstname like ? order by firstn
       console.log(`USERS : [${element.id}] ${element.firstname} ${element.lastname} email is ${element.email}`);      
     });
     console.log('\n');
-    logger.info(`Users with fisrt name like 'y'\n`);
+    logger.info(`Users with fisrt name like 'y'`);
   })
   .catch( (error) => {
       console.log('\n');
-      logger.error(`${error}\n`);
+      logger.error(`${error}`);
   })
 // ------------------------------------------------------------
 // Test a join
@@ -75,46 +77,9 @@ moduleSQL.poolSelect(joinquery)
       console.log(`USERS ROLES : [${element.email}] \t\t ${element.name} \t ${element.level} `);      
     });
     console.log('\n');
-    logger.info(`Users roles\n`);
+    logger.info(`Users roles`);
   // Now test INSERT
-  const now = th.getDateTime();
-  
-  moduleSQL.poolRW()
-    .then( () => {
-      // moduleSQL.poolInsert('insert into bomerledb.dblog (action, logtime, message, module, severity, useremail, utctime )',
-      //       ['testjs', `str_to_date('${now}', '%M-%d-%Y %H:%i:%s')`, 'test de la librairie mysql2', 'dbtest', 1,
-      //          'yves@free.fr', `str_to_date('${now}', '%M-%d-%Y %H:%i:%s')`]
-      // )
-      logger.info(`[INSERT] date format is ${now}`)
-      moduleSQL.poolInsert(`insert into bomerledb.dblog (action, logtime, message, module, severity, useremail, utctime ) 
-        values ( ?, str_to_date(?, '%M-%d-%Y %H:%i:%s'), ?, ?, ?, ?, str_to_date(?, '%M-%d-%Y %H:%i:%s') )`,
-            [ 'testjs', 
-              now, 
-              'test de la librairie mysql2', 
-              'dbtest', 
-              1,
-              'yves@free.fr', 
-              now, 
-            ]
-      )
-      .then( (result) => {
-        moduleSQL.poolCommit()
-        .then( () => {
-          logger.info(`[INSERT] ${result}`);
-        })
-      })
-      .catch( (error) => {
-        logger.error(`[INSERT] ${error}`);
-      })
-    })
-    .catch( (error) => {
-      console.log(error);
-    })
-  })
-  .catch( (error) => {
-      console.log('\n');
-      logger.error(`${error}\n`);
-  })
+  const now = th.getDateTime();  
 // ------------------------------------------------------------
 // Wait for previous tasks to finish
 Promise.all([waiting]).then((result) => {
@@ -136,5 +101,5 @@ Promise.all([waiting]).then((result) => {
       .catch( (error) => {
         console.log(error);
       })
-  } 
-);
+  })
+})

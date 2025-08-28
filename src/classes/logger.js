@@ -3,6 +3,7 @@
 //    logger.js
 //----------------------------------------------------------------------------
 import timeHelper from './timeHelper.js';
+import  { moduleSQL}  from '../sandbox/moduleSQL.js';
 
 export default class Logger {
 
@@ -14,15 +15,17 @@ export default class Logger {
     static WARNING = 2;
     static ERROR = 3;
     static FATAL = 4;
-    static Version = 'logger:1.53, Aug 20 2025';
+    static Version = 'logger:1.54, Aug 28 2025';
     static OUTFILE = '/tmp/' + this.Version.replace(/[,:]/g,'_').replace(/ /g, '_') + '.log'
 
     constructor(module = 'logger') {
         this.dateHelper = new timeHelper();
-        this.module = module;
+        this.module = module;   // Trace the caller module signature : default is logger
+        this.dbtrace = false;        // Should we also trace to a dblog table ? 
     }
-    setModule(module) {
-        this.module = module;
+    setModule(module) {this.module = module;}
+    setDatabaseTrace(activatedblog) {
+        this.dbtrace = activatedblog ? true : false;
     }
     /**
      * 
@@ -70,7 +73,43 @@ export default class Logger {
      */
     log(mess, level) {
         // Output message
-        console.log(`[${this.module}] ${this.dateHelper.getDateTime()} [ ${this.levelToString(level)} ] : ${mess}`);
+        console.log(`[${this.module}] ${this.dateHelper.getDateTime()} [ ${this.levelToString(level)} ] : ${mess}\n`);
+        if(this.dbtrace) {
+            this.logToDatabase(mess, level);
+        }
         return;
+    }
+    /**
+     * @param {*} mess The message 
+     * @param {*} level The message level in the DIWEF specification
+     * @returns 
+    */
+    logToDatabase(mess, level) {
+        console.log(`******************* db trace called`);
+        
+        moduleSQL.poolRW()
+            .then( () => {
+                const now = this.dateHelper.getDateTime();
+                moduleSQL.poolInsert(`insert into bomerledb.dblog (action, logtime, message, module, severity, useremail, utctime ) 
+                    values ( ?, str_to_date(?, '%M-%d-%Y %H:%i:%s'), ?, ?, ?, ?, str_to_date(?, '%M-%d-%Y %H:%i:%s') )`,
+                        [ this.module, 
+                            now, 
+                            mess, 
+                            this.module, 
+                            level,
+                            'logger@nomail.com', 
+                            now, 
+                        ]
+                )
+                .then( (result) => {
+                    moduleSQL.poolCommit()
+                })
+                .catch( (error) => {
+                    console.log(`[DB LOGGER ERROR] ${error}`);
+                })
+            })
+            .catch( (error) => {
+                console.log(`[DB LOGGER ERROR] ${error}`);
+            })
     }
 }
