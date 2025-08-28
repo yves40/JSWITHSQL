@@ -85,8 +85,6 @@ export default class Logger {
      * @returns 
     */
     logToDatabase(mess, level) {
-        console.log(`******************* db trace called`);
-        
         moduleSQL.poolRW()
             .then( () => {
                 const now = this.dateHelper.getDateTime();
