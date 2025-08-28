@@ -1,5 +1,6 @@
 import  { moduleSQL}  from './moduleSQL.js';
 import timeHelper from '../classes/timeHelper.js'
+import sqlHelper from '../classes/sqlHelper.js'
 import Logger from '../classes/logger.js';
 import Timer from '../classes/timer.js';
 
@@ -94,18 +95,39 @@ Promise.all([waiting]).then((result) => {
     moduleSQL.select("SELECT * FROM dblog order by logtime desc limit 30")
     .then( (payload) => {
         logger.setModule('FINAL SELECT on dblog');
-        payload.forEach(element => {
-          console.log(`[${logger.levelToString(element.severity)}] ${th.getDateTimeFromDate(element.logtime)} ${element.module} ${element.message} `);      
-        });
+        dumpLogs(payload);
         console.log('\n\n');
-        // Some time report
-        timer.stopTimer();
-        logger.info(`The total time for this run is:  ${timer.getElapsedString()}`);
-        console.log('\n\n');
-        process.exit(0);
+        /*
+          Test another mode for waiting select calls
+        */
+        ( async ( ) => {
+          let result = await testAwait();
+          dumpLogs(result);
+          logger.setModule('FINAL SELECT dblog async/await');
+          logger.info(`Got log data with await/async method`);
+          // Class test now
+          const sqlh = new sqlHelper();
+          result = await sqlh.Select("SELECT * FROM dblog order by logtime desc limit 30");
+          dumpLogs(result);
+          // Some time report
+          timer.stopTimer();
+          logger.info(`The total time for this run is:  ${timer.getElapsedString()}`);
+          console.log('\n\n');
+          // process.exit(0);
+        })();
       })
       .catch( (error) => {
         console.log(error);
       })
   })
 })
+
+async function testAwait() {
+  const result = await moduleSQL.poolSelect("SELECT * FROM dblog order by logtime desc limit 30");
+  return result;    
+}
+function dumpLogs(logarray) {
+  logarray.forEach(element => {
+      console.log(`[${logger.levelToString(element.severity)}] ${th.getDateTimeFromDate(element.logtime)} ${element.module} ${element.message} `);      
+    });  
+}
