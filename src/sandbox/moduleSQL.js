@@ -36,7 +36,7 @@ const moduleSQL = (function () {
           }
         }
         catch(err) {
-          rej(`Got a problem here : ${err.message}`);
+          rej(`Got a problem on SELECT : ${err.message}`);
         }
     }
     //------------------- PUBLIC METHODS -------------------
@@ -127,6 +127,117 @@ const moduleSQL = (function () {
       })
     }
     // -----------------------------------------------------
+    async function poolInsert(sql, params = null) {
+      return new Promise((res, rej) => {
+        if(pool === null ) {
+          createPool()
+            .then( result => {
+              InsertData(sql, res, rej, pool, params);
+            })
+            .catch(error => {
+              console.log(error);              
+            })
+        }
+        else {
+            InsertData(sql, res, rej, pool, params);
+        }
+        async function InsertData(sql, res, rej, pool, params) {
+        try {
+            if(params === null) {
+              const [ result, fields ] = await pool.execute(sql);
+              res('Insert done');              
+            }
+            else {
+              const [ result, fields ] = await pool.execute(sql, params);
+              res('Insert done');              
+            }
+          }
+          catch(err) {
+            rej(`Got a problem on INSERT : ${err.message}`);
+          } 
+        }
+      })
+    }
+    // -----------------------------------------------------
+    async function poolRW() {
+      return new Promise((res, rej) => {
+        if(pool === null ) {
+          createPool()
+            .then( result => {
+              RW(res, rej);
+            })
+            .catch(error => {
+              console.log(error);              
+            })
+        }
+        else {
+            RW(res, rej);
+        }
+        async function RW(res, rej) {
+        try {
+              await pool.execute('set transaction read write');
+              res('Read write transaction started');
+        }
+        catch(err) {
+          rej(`Got a problem on RW transaction : ${err.message}`);
+        } 
+        }
+      })
+    }
+    // -----------------------------------------------------
+    async function poolCommit() {
+      return new Promise((res, rej) => {
+        if(pool === null ) {
+          createPool()
+            .then( result => {
+              Commit(res, rej);
+            })
+            .catch(error => {
+              console.log(error);              
+            })
+        }
+        else {
+            Commit(res, rej);
+        }
+        async function Commit(res, rej) {
+        try {
+              await pool.execute('commit');
+              res('Transation committed')
+        }
+        catch(err) {
+          await poolRollback();
+          rej(`Got a problem comitting transaction : ${err.message}`);
+        } 
+        }
+      })
+    }
+    // -----------------------------------------------------
+    async function poolRollback() {
+      return new Promise((res, rej) => {
+        if(pool === null ) {
+          createPool()
+            .then( result => {
+              Rollback(res, rej);
+            })
+            .catch(error => {
+              console.log(error);              
+            })
+        }
+        else {
+            Rollback(res, rej);
+        }
+        async function Rollback(res, rej) {
+        try {
+              await pool.execute('corollbackmmit');
+              res('Transation canceled');
+        }
+        catch(err) {
+          rej(`Got a problem canceling transaction : ${err.message}`);
+        } 
+        }
+      })
+    }
+    // -----------------------------------------------------
     // What is exposed outside module ? 
     // -----------------------------------------------------
     return {
@@ -134,7 +245,11 @@ const moduleSQL = (function () {
         createConnection: createConnection,
         createPool: createPool,
         select: select,
-        poolSelect: poolSelect
+        poolSelect: poolSelect, 
+        poolInsert: poolInsert, 
+        poolRW: poolRW,
+        poolCommit: poolCommit,
+        poolRollback: poolRollback
     };
 }());
 

@@ -6,6 +6,8 @@ import Timer from '../classes/timer.js';
 // Use the old logger
 const logger = new Logger('dbtest');
 const timer = new Timer();
+const th = new timeHelper()
+const DELAY = 6000;
 
 console.log('\n\n');
 timer.startTimer();
@@ -16,7 +18,7 @@ console.log('\n\n');
 const waiting = new Promise((res, rej) => {
   setTimeout(() => {
     res('[waiting] Delay expired');
-  }, 8000);
+  }, DELAY);
 })
 
 // ------------------------------------------------------------
@@ -74,14 +76,45 @@ moduleSQL.poolSelect(joinquery)
     });
     console.log('\n');
     logger.info(`Users roles\n`);
+  // Now test INSERT
+  const now = th.getDateTime();
+  
+  moduleSQL.poolRW()
+    .then( () => {
+      // moduleSQL.poolInsert('insert into bomerledb.dblog (action, logtime, message, module, severity, useremail, utctime )',
+      //       ['testjs', `str_to_date('${now}', '%M-%d-%Y %H:%i:%s')`, 'test de la librairie mysql2', 'dbtest', 1,
+      //          'yves@free.fr', `str_to_date('${now}', '%M-%d-%Y %H:%i:%s')`]
+      // )
+      logger.info(`[INSERT] date format is ${now}`)
+      moduleSQL.poolInsert(`insert into bomerledb.dblog (action, logtime, message, module, severity, useremail, utctime ) 
+        values ( ?, str_to_date(?, '%M-%d-%Y %H:%i:%s'), ?, ?, ?, ?, str_to_date(?, '%M-%d-%Y %H:%i:%s') )`,
+            [ 'testjs', 
+              now, 
+              'test de la librairie mysql2', 
+              'dbtest', 
+              1,
+              'yves@free.fr', 
+              now, 
+            ]
+      )
+      .then( (result) => {
+        moduleSQL.poolCommit()
+        .then( () => {
+          logger.info(`[INSERT] ${result}`);
+        })
+      })
+      .catch( (error) => {
+        logger.error(`[INSERT] ${error}`);
+      })
+    })
+    .catch( (error) => {
+      console.log(error);
+    })
   })
   .catch( (error) => {
       console.log('\n');
       logger.error(`${error}\n`);
   })
-
-
-
 // ------------------------------------------------------------
 // Wait for previous tasks to finish
 Promise.all([waiting]).then((result) => {
@@ -90,14 +123,14 @@ Promise.all([waiting]).then((result) => {
     console.log('\n');
     moduleSQL.select("SELECT * FROM dblog order by logtime desc limit 5")
       .then( (payload) => {
-        const th = new timeHelper();
         payload.forEach(element => {
           console.log(`DBLOG : ${logger.levelToString(element.severity)} ${element.message} : ${th.getDateTimeFromDate(element.logtime)}`);      
         });
         console.log('\n\n');
         // Some time report
         timer.stopTimer();
-        logger.info(`The total time for this run is:  ${timer.getElapsedString()}`)
+        logger.info(`The total time for this run is:  ${timer.getElapsedString()}`);
+        console.log('\n\n');
         process.exit(0);
       })
       .catch( (error) => {

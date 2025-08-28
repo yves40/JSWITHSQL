@@ -10,7 +10,7 @@
 class timeHelper {
 
     constructor() {
-        this.version = 'timeHelper:1.03, Mar 25 2023';
+        this.version = 'timeHelper:1.04, Aug 27 2025';
         this.months = [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ];
         this.monthsfr = [ 'Jan', 'Feb', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aout', 'Sep', 'Oct', 'Nov', 'Dec' ];
         this.start = 0;
@@ -23,6 +23,10 @@ class timeHelper {
         let d = new Date();
         return this.months[d.getMonth()] + '-' + d.getDate() + '-' + d.getFullYear() + ' ' 
                 + d.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1") ;
+    }
+    getDateTimeSQL() {
+        let d = new Date();
+        return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()} ${d.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1")}` ;
     }
     getDateTimeFromDate(toconvert, locale='fr') {
         let d = new Date(toconvert);
