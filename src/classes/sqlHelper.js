@@ -12,10 +12,11 @@ export default class sqlHelper {
   #dbname = process.env.DBNAME;
   #dbuser = process.env.DBUSER;
   #dbpass = process.env.DBPASS;
+  #pool = null;
   
   constructor() {
     this.Version = "sqlHelper.js Aug 28 2025, 1.01";
-    this.pool = null;
+    // this.pool = null;
     
     dotenv.config({ quiet: true });
     
@@ -29,13 +30,72 @@ export default class sqlHelper {
       (async () => {
         await this.#checkPool();
         try {
-          const [ rows ] = await this.pool.query(query, params);
+          const [ rows ] = await this.#pool.query(query, params);
           resolve(rows) ;
         }
         catch(error) {
-          console.log(`*** SELECT ERROR *** ${error}`);
           reject(error);
         }
+      })();
+    });
+  }
+  // ------------------------------------------------------------------------
+  Insert(sql, params = null) {
+    return new Promise((resolve, reject) => {
+      (async () => {
+        await this.#checkPool();
+        try {
+          const [ result, fields ] = await this.#pool.execute(sql, params);
+          resolve(true) ;
+        }
+        catch(error) {
+          reject(error);
+        }
+      })();
+    });
+  }
+  // ------------------------------------------------------------------------
+  startTransactionRW() {
+    return new Promise((resolve, reject) => {
+      (async () => {
+        await this.#checkPool();
+        try {
+              await this.#pool.execute('set transaction read write');
+              resolve(true);
+        }
+        catch(err) {
+          reject(`${err.message}`);
+        } 
+      })();
+    });
+  }
+  // ------------------------------------------------------------------------
+  rollbackTransaction() {
+    return new Promise((resolve, reject) => {
+      (async () => {
+        await this.#checkPool();
+        try {
+              await this.#pool.execute('rollback');
+              resolve(true);
+        }
+        catch(err) {
+          reject(`${err.message}`);
+        } 
+      })();
+    });
+  }
+  // ------------------------------------------------------------------------
+  commitTransaction() {
+    return new Promise((resolve, reject) => {
+      (async () => {
+        await this.#checkPool();
+        try {
+              await this.#pool.execute('commit');
+              resolve(true);
+        }
+        catch(err) {
+          reject(`${err.message}`);
+        } 
       })();
     });
   }
@@ -70,10 +130,10 @@ export default class sqlHelper {
   // ------------------------------------------------------------------------
   #checkPool() {
     return new Promise((resolve, reject) => {
-      if(this.pool === null) {
+      if(this.#pool === null) {
         (async () => {
            try {
-             this.pool = await this.#createPool();
+             this.#pool = await this.#createPool();
              console.log(`*** POOL CREATED *** `);
              resolve(true)
            }

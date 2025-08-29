@@ -104,16 +104,32 @@ Promise.all([waiting]).then((result) => {
           let result = await testAwait();
           dumpLogs(result);
           logger.setModule('FINAL SELECT dblog async/await');
-          logger.info(`Got log data with await/async method`);
+          logger.info(`Get log data with await/async method`);
+
+
+          // *************************************************************
           // Class test now
-          const sqlh = new sqlHelper();
-          result = await sqlh.Select("SELECT * FROM dblog order by logtime desc limit 30");
-          dumpLogs(result);
+          // *************************************************************
+          try {
+            logger.setModule('Class test');
+            logger.info(`Got log data with the new sqlHelper class`);
+            const sqlh = new sqlHelper();
+            // logger.error(`Volontaire`);
+            result = await sqlh.Select("SELECT * FROM dblog order by logtimee desc limit 30");
+            dumpLogs(result);
+          }
+          catch(error) {
+            console.log(error.message);            
+            logger.error(error.message);
+          }
+          
+
           // Some time report
           timer.stopTimer();
+          logger.setModule('dbtest');
           logger.info(`The total time for this run is:  ${timer.getElapsedString()}`);
           console.log('\n\n');
-          // process.exit(0);
+          process.exit(0);
         })();
       })
       .catch( (error) => {

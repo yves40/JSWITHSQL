@@ -229,7 +229,7 @@ const moduleSQL = (function () {
         }
         async function Rollback(res, rej) {
         try {
-              await pool.execute('corollbackmmit');
+              await pool.execute('rollback');
               res('Transation canceled');
         }
         catch(err) {

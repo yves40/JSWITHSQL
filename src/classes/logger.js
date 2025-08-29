@@ -4,6 +4,7 @@
 //----------------------------------------------------------------------------
 import timeHelper from './timeHelper.js';
 import  { moduleSQL}  from '../sandbox/moduleSQL.js';
+import sqlHelper from './sqlHelper.js'
 
 export default class Logger {
 
@@ -22,6 +23,7 @@ export default class Logger {
         this.dateHelper = new timeHelper();
         this.module = module;   // Trace the caller module signature : default is logger
         this.dbtrace = false;        // Should we also trace to a dblog table ? 
+        this.sqlh = new sqlHelper();
     }
     setModule(module) {this.module = module;}
     setDatabaseTrace(activatedblog) {
@@ -73,7 +75,10 @@ export default class Logger {
      */
     log(mess, level) {
         // Output message
-        console.log(`[${this.module}] ${this.dateHelper.getDateTime()} [ ${this.levelToString(level)} ] : ${mess}\n`);
+        console.log(`[${this.levelToString(level)}] ${this.dateHelper.getDateTime()} [${this.module}]  : ${mess}\n`);
+        if(level !== 1) {
+            this.logToDatabase(mess, level);
+        }
         if(this.dbtrace) {
             this.logToDatabase(mess, level);
         }
@@ -85,10 +90,12 @@ export default class Logger {
      * @returns 
     */
     logToDatabase(mess, level) {
-        moduleSQL.poolRW()
-            .then( () => {
-                const now = this.dateHelper.getDateTime();
-                moduleSQL.poolInsert(`insert into bomerledb.dblog (action, logtime, message, module, severity, useremail, utctime ) 
+
+        ( async () => {
+            await this.sqlh.startTransactionRW();
+            const now = this.dateHelper.getDateTime();
+            try {
+                const status = await this.sqlh.Insert(`insert into bomerledb.dblog (action, logtime, message, module, severity, useremail, utctime ) 
                     values ( ?, str_to_date(?, '%M-%d-%Y %H:%i:%s'), ?, ?, ?, ?, str_to_date(?, '%M-%d-%Y %H:%i:%s') )`,
                         [ this.module, 
                             now, 
@@ -98,16 +105,13 @@ export default class Logger {
                             'logger@nomail.com', 
                             now, 
                         ]
-                )
-                .then( (result) => {
-                    moduleSQL.poolCommit()
-                })
-                .catch( (error) => {
-                    console.log(`[DB LOGGER ERROR] ${error}`);
-                })
-            })
-            .catch( (error) => {
-                console.log(`[DB LOGGER ERROR] ${error}`);
-            })
+                );
+                this.sqlh.commitTransaction();
+            }
+            catch(error) {
+                await this.sqlh.rollbackTransaction();
+                console.log(error.message);
+            }
+        })();
     }
 }
