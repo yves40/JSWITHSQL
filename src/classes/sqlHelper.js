@@ -15,11 +15,8 @@ export default class sqlHelper {
   #pool = null;
   
   constructor() {
-    this.Version = "sqlHelper.js Aug 28 2025, 1.01";
-    // this.pool = null;
-    
-    dotenv.config({ quiet: true });
-    
+    this.Version = "sqlHelper.js Aug 29 2025, 1.02";
+    dotenv.config({ quiet: true });    
   }
 
   // ------------------------------------------------------------------------
@@ -119,7 +116,9 @@ export default class sqlHelper {
             enableKeepAlive: true,
             charset: 'utf8mb4',
             keepAliveInitialDelay: 0,
-          })
+          });
+          this.#setPool(pool);
+          const conn = pool.getConnection();
           resolve(pool);
       }
       catch( error ) {
@@ -128,23 +127,29 @@ export default class sqlHelper {
     })
   }
   // ------------------------------------------------------------------------
+  #setPool(pool) {
+    this.#pool = pool;
+  }
+  // ------------------------------------------------------------------------
   #checkPool() {
     return new Promise((resolve, reject) => {
       if(this.#pool === null) {
+        console.log(`*** POOL MUST BE CREATED *** `);
         (async () => {
            try {
-             this.#pool = await this.#createPool();
+             await this.#createPool();
              console.log(`*** POOL CREATED *** `);
-             resolve(true)
+             resolve(false);
            }
            catch( error ) {
              console.log(`*** POOL ACQUISITION ERROR *** ${error}`);
-             reject(false);
+             reject(error);
            }
          })();
       }
       else {
-        resolve(true);
+      console.log(`*** POOL EXISTS *** `);
+       resolve(true);
       }
     })
   }
