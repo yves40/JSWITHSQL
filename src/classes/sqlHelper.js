@@ -12,11 +12,14 @@ export default class sqlHelper {
   #dbname = process.env.DBNAME;
   #dbuser = process.env.DBUSER;
   #dbpass = process.env.DBPASS;
-  #pool = null;
   
   constructor() {
-    this.Version = "sqlHelper.js Aug 29 2025, 1.02";
-    dotenv.config({ quiet: true });    
+    this.Version = "sqlHelper.js Aug 29 2025, 1.04";
+
+    dotenv.config({ quiet: true });
+    (async () => {
+      this.pool = this.#createPool();
+    })();
   }
 
   // ------------------------------------------------------------------------
@@ -25,9 +28,8 @@ export default class sqlHelper {
   Select(query, params = null) {
     return new Promise((resolve, reject) => {
       (async () => {
-        await this.#checkPool();
         try {
-          const [ rows ] = await this.#pool.query(query, params);
+          const [ rows ] = await this.pool.query(query, params);
           resolve(rows) ;
         }
         catch(error) {
@@ -40,9 +42,8 @@ export default class sqlHelper {
   Insert(sql, params = null) {
     return new Promise((resolve, reject) => {
       (async () => {
-        await this.#checkPool();
         try {
-          const [ result, fields ] = await this.#pool.execute(sql, params);
+          const [ result, fields ] = await this.pool.execute(sql, params);
           resolve(true) ;
         }
         catch(error) {
@@ -55,9 +56,8 @@ export default class sqlHelper {
   startTransactionRW() {
     return new Promise((resolve, reject) => {
       (async () => {
-        await this.#checkPool();
         try {
-              await this.#pool.execute('set transaction read write');
+              await this.pool.execute('set transaction read write');
               resolve(true);
         }
         catch(err) {
@@ -70,9 +70,8 @@ export default class sqlHelper {
   rollbackTransaction() {
     return new Promise((resolve, reject) => {
       (async () => {
-        await this.#checkPool();
         try {
-              await this.#pool.execute('rollback');
+              await this.pool.execute('rollback');
               resolve(true);
         }
         catch(err) {
@@ -85,9 +84,8 @@ export default class sqlHelper {
   commitTransaction() {
     return new Promise((resolve, reject) => {
       (async () => {
-        await this.#checkPool();
         try {
-              await this.#pool.execute('commit');
+              await this.pool.execute('commit');
               resolve(true);
         }
         catch(err) {
@@ -100,7 +98,6 @@ export default class sqlHelper {
   //      P R I V A T E 
   // ------------------------------------------------------------------------
   #createPool() {
-    return new Promise((resolve, reject) => {
       try {
         const pool = mysqlPromise.createPool({
             host: this.#dbhost, 
@@ -117,40 +114,10 @@ export default class sqlHelper {
             charset: 'utf8mb4',
             keepAliveInitialDelay: 0,
           });
-          this.#setPool(pool);
-          const conn = pool.getConnection();
-          resolve(pool);
+          return(pool);
       }
       catch( error ) {
-        reject(`Got a problem with connection pooling ${error}`);
+        throw new Error(`Got a problem with connection pooling ${error}`);
       }
-    })
-  }
-  // ------------------------------------------------------------------------
-  #setPool(pool) {
-    this.#pool = pool;
-  }
-  // ------------------------------------------------------------------------
-  #checkPool() {
-    return new Promise((resolve, reject) => {
-      if(this.#pool === null) {
-        console.log(`*** POOL MUST BE CREATED *** `);
-        (async () => {
-           try {
-             await this.#createPool();
-             console.log(`*** POOL CREATED *** `);
-             resolve(false);
-           }
-           catch( error ) {
-             console.log(`*** POOL ACQUISITION ERROR *** ${error}`);
-             reject(error);
-           }
-         })();
-      }
-      else {
-      console.log(`*** POOL EXISTS *** `);
-       resolve(true);
-      }
-    })
   }
 }

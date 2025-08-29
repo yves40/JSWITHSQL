@@ -16,7 +16,7 @@ export default class Logger {
     static WARNING = 2;
     static ERROR = 3;
     static FATAL = 4;
-    static Version = 'logger:1.54, Aug 28 2025';
+    static Version = 'logger:1.55, Aug 29 2025';
     static OUTFILE = '/tmp/' + this.Version.replace(/[,:]/g,'_').replace(/ /g, '_') + '.log'
 
     constructor(module = 'logger') {
@@ -76,9 +76,6 @@ export default class Logger {
     log(mess, level) {
         // Output message
         console.log(`[${this.levelToString(level)}] ${this.dateHelper.getDateTime()} [${this.module}]  : ${mess}\n`);
-        if(level !== 1) {
-            this.logToDatabase(mess, level);
-        }
         if(this.dbtrace) {
             this.logToDatabase(mess, level);
         }
@@ -90,11 +87,10 @@ export default class Logger {
      * @returns 
     */
     logToDatabase(mess, level) {
-
+        const now = this.dateHelper.getDateTime();
         ( async () => {
-            await this.sqlh.startTransactionRW();
-            const now = this.dateHelper.getDateTime();
             try {
+                await this.sqlh.startTransactionRW();
                 const status = await this.sqlh.Insert(`insert into bomerledb.dblog (action, logtime, message, module, severity, useremail, utctime ) 
                     values ( ?, str_to_date(?, '%M-%d-%Y %H:%i:%s'), ?, ?, ?, ?, str_to_date(?, '%M-%d-%Y %H:%i:%s') )`,
                         [ this.module, 
@@ -103,14 +99,14 @@ export default class Logger {
                             this.module, 
                             level,
                             'logger@nomail.com', 
-                            now, 
+                            now
                         ]
                 );
-                this.sqlh.commitTransaction();
+                await this.sqlh.commitTransaction();
             }
             catch(error) {
                 await this.sqlh.rollbackTransaction();
-                console.log(error.message);
+                console.log(error);
             }
         })();
     }
