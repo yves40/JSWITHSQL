@@ -9,11 +9,14 @@
       "type": "node",
       "request": "launch",
       "name": "dbtest",
-      "skipFiles": [
-        "<node_internals>/**"
-      ],
       "program": "${workspaceFolder}\\src\\sandbox\\dbtest.js",
-      "args": ["-dump 30"]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "dbtest dump",
+      "program": "${workspaceFolder}\\src\\sandbox\\dbtest.js",
+      "args": ["-dump", "30"]
     }
   ]
 }
