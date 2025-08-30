@@ -3,7 +3,6 @@
 //    logger.js
 //----------------------------------------------------------------------------
 import timeHelper from './timeHelper.js';
-import  { moduleSQL}  from '../sandbox/moduleSQL.js';
 import sqlHelper from './sqlHelper.js'
 
 export default class Logger {
@@ -16,16 +15,18 @@ export default class Logger {
     static WARNING = 2;
     static ERROR = 3;
     static FATAL = 4;
-    static Version = 'logger:1.55, Aug 29 2025';
+    static Version = 'logger:1.56, Aug 30 2025';
     static OUTFILE = '/tmp/' + this.Version.replace(/[,:]/g,'_').replace(/ /g, '_') + '.log'
 
     constructor(module = 'logger') {
         this.dateHelper = new timeHelper();
         this.module = module;   // Trace the caller module signature : default is logger
-        this.dbtrace = false;        // Should we also trace to a dblog table ? 
+        this.action = '';
+        this.dbtrace = false;   // Should we also trace to a dblog table ? 
         this.sqlh = new sqlHelper();
     }
     setModule(module) {this.module = module;}
+    setAction(action) {this.action = action;}
     setDatabaseTrace(activatedblog) {
         this.dbtrace = activatedblog ? true : false;
     }
@@ -93,7 +94,7 @@ export default class Logger {
                 await this.sqlh.startTransactionRW();
                 const status = await this.sqlh.Insert(`insert into bomerledb.dblog (action, logtime, message, module, severity, useremail, utctime ) 
                     values ( ?, str_to_date(?, '%M-%d-%Y %H:%i:%s'), ?, ?, ?, ?, str_to_date(?, '%M-%d-%Y %H:%i:%s') )`,
-                        [ this.module, 
+                        [ this.action, 
                             now, 
                             mess, 
                             this.module, 

@@ -6,7 +6,6 @@ import dotenv from 'dotenv';
 
 export default class sqlHelper {
 
-  
   #dbhost = process.env.DBHOST;
   #dbport = process.env.DBPORT;
   #dbname = process.env.DBNAME;
@@ -14,9 +13,15 @@ export default class sqlHelper {
   #dbpass = process.env.DBPASS;
   
   constructor() {
-    this.Version = "sqlHelper.js Aug 29 2025, 1.04";
+    this.Version = "sqlHelper.js Aug 30 2025, 1.55";
 
     dotenv.config({ quiet: true });
+    this.#dbhost = process.env.DBHOST;
+    this.#dbport = process.env.DBPORT;
+    this.#dbname = process.env.DBNAME;
+    this.#dbuser = process.env.DBUSER;
+    this.#dbpass = process.env.DBPASS;
+
     (async () => {
       this.pool = this.#createPool();
     })();
