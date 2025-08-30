@@ -75,7 +75,7 @@ export default class Logger {
      */
     log(mess, level) {
         // Output message
-        console.log(`[${this.levelToString(level)}] ${this.dateHelper.getDateTime()} [${this.module}]  : ${mess}\n`);
+        console.log(`[${this.levelToString(level)}] ${this.dateHelper.getDateTime()} [${this.module}]  : ${mess}`);
         if(this.dbtrace) {
             this.logToDatabase(mess, level);
         }
@@ -109,5 +109,11 @@ export default class Logger {
                 console.log(error);
             }
         })();
+    }
+    async getLatestDBlogs(range) {
+        const result = await this.sqlh.Select("SELECT * FROM dblog order by logtime desc limit ?",
+            [range]
+        );
+        return result;
     }
 }
