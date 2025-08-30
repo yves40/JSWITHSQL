@@ -49,7 +49,7 @@ try {
   const sqlh = new sqlHelper();
   logger.setAction('#### Section 01: ');
   logger.info(`PROCESS : Get 30 lines of log data with the new sqlHelper class`);
-  let result = await sqlh.Select("SELECT * FROM dblog order by logtime desc limit 30");
+  let result = await sqlh.Select("SELECT * FROM dblog order by logtimee desc limit 30");
   logger.info(`PROCESS : Selected ${result.length} lines from the DB log`)
   logger.setAction('#### Section 02: ');
   logger.info(`PROCESS : Get latest lines of log data`);
@@ -70,6 +70,9 @@ try {
 catch(error) {
   console.log(error.message);            
   logger.error(error.message);
+  setTimeout(() => {
+    process.exit(0);
+  }, 3000);
 }
 // ------------------------------------------------------------
 function dumpLogs(logarray) {
