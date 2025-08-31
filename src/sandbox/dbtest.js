@@ -73,13 +73,17 @@ try {
   console.log('\n\n');  
   logger.info(`END : The total time for this run is:  ${timer.getElapsedString()}`);
   console.log('Exit in 3 seconds\n\n');
-  await waitplease(3);
+  const message = await waitplease(3);
+  console.log(message);
+  console.log('\n\n');  
   process.exit(0);
 }
 catch(error) {
   console.log(error.message);            
   logger.error(error.message);
-  await waitplease(3);
+  const message = await waitplease(3);
+  console.log(message);
+  console.log('\n\n');  
   process.exit(1);
 }
 // ------------------------------------------------------------
